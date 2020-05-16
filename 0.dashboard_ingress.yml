@@ -1,0 +1,19 @@
+---
+# Traefik v1 is the default ingress controller in k3d/k3s
+# Try it out it is awesome https://docs.traefik.io/v1.7/
+# You can try it out v2 too https://docs.traefik.io/v2.2/
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: tekton
+  namespace: tekton-pipelines
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: tekton-dashboard
+          servicePort: 9097

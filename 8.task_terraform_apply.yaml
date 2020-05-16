@@ -1,0 +1,18 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-terraform-apply
+  namespace: tekton-pipelines
+  description: Terraform Plan and Apply
+spec:
+  resources:
+    inputs:
+    - name: workspace
+      type: git
+  steps:
+  - name: terraform-apply
+    image: docker.io/vikas027/tekton-demo-terraform:v0.12.24 # The image which we had built in the previous step
+    script: |
+      #!/usr/bin/env sh
+      cd /workspace/workspace && terraform init && terraform validate && terraform apply -auto-approve

@@ -1,0 +1,21 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-build-push-docker-image
+  namespace: tekton-pipelines
+spec:
+  serviceAccountName: pipeline-sa
+  timeout: "1h1m30s"
+  pipelineRef:
+    name: pipeline-build-push-docker-image
+  params:
+  - name: imageTag
+    value: v0.12.24 # My Terraform Version
+  resources:
+  - name: source-repo
+    resourceRef:
+      name: image-terraform-git
+  - name: image-name
+    resourceRef:
+      name: image-terraform

@@ -1,0 +1,15 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-terraform-apply
+  namespace: tekton-pipelines
+spec:
+  serviceAccountName: pipeline-sa
+  timeout: "1h1m30s"
+  pipelineRef:
+    name: pipeline-terraform-apply
+  resources:
+  - name: source-repo
+    resourceRef:
+      name: terraform-git

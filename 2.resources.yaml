@@ -1,0 +1,29 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: image-terraform-git
+  namespace: tekton-pipelines
+  description: Git Repository with Dockerfile
+spec:
+  type: git
+  params:
+    - name: url
+      value: git@github.com:vikas027/tekton-k8s-demo.git
+    - name: revision
+      value: docker
+    - name: provider
+      value: github
+
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: image-terraform
+  namespace: tekton-pipelines
+  description: Docker Hub Image
+spec:
+  type: image
+  params:
+    - name: url
+      value: docker.io/vikas027/tekton-demo-terraform

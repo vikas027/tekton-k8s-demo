@@ -1,0 +1,21 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-terraform-apply
+  namespace: tekton-pipelines
+spec:
+  params:
+  resources:
+  - name: source-repo
+    type: git
+  tasks:
+  - name: terraform-plan-apply
+    retries: 1
+    timeout: "1h0m00s"
+    taskRef:
+      name: task-terraform-apply
+    resources:
+      inputs:
+      - name: workspace
+        resource: source-repo

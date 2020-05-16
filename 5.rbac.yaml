@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline-sa
+  namespace: tekton-pipelines
+secrets:
+  - name: dockerhub-secret
+  - name: github-secret
+imagePullSecrets:
+ - name: dockerhub-secret

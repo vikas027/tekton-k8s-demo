@@ -1,0 +1,37 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-build-push-docker-image
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: imageTag
+      description: Tag to apply to the built image
+      default: latest
+  resources:
+  - name: source-repo
+    type: git
+  - name: image-name
+    type: image
+
+  tasks:
+  - name: build-push-image
+    retries: 1
+    timeout: "1h0m00s"
+    taskRef:
+      name: task-build-push
+    params: # Overwrite the default parameters in the task
+    - name: pathToDockerFile
+      value: Dockerfile
+    - name: pathToContext
+      value: /workspace/workspace
+    - name: imageTag
+      value: $(params.imageTag)
+    resources:
+      inputs:
+      - name: workspace
+        resource: source-repo
+      outputs:
+      - name: builtImage
+        resource: image-name

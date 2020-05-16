@@ -1,0 +1,44 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-build-push
+  namespace: tekton-pipelines
+  description: Build and Push Image
+spec:
+  params:
+  - name: pathToDockerFile
+    description: The path to the dockerfile to build
+    default: /workspace/workspace/Dockerfile
+  - name: pathToContext
+    description: The build context used by Kaniko (https://github.com/GoogleContainerTools/kaniko#kaniko-build-contexts)
+    default: /workspace/workspace
+  - name: imageTag
+    description: Tag to apply to the built image (if not defined in pipelinerun)
+    default: latest
+  resources:
+    inputs:
+    - name: workspace
+      type: git
+    outputs:
+    - name: builtImage
+      type: image
+  steps:
+  - name: echo-vars # An example to debug parameters and variables
+    image: alpine:3.11.5
+    script: |
+      #!/usr/bin/env sh
+      echo Pipeline Variables -- '$(params.pathToDockerFile) $(params.pathToContext) $(resources.outputs.builtImage.url):$(params.imageTag)'
+      echo Repository Contents
+      ls -l $(params.pathToContext)
+  - name: build-and-push
+    image: gcr.io/kaniko-project/executor:v0.19.0
+    env:
+    - name: "DOCKER_CONFIG"
+      value: "/tekton/home/.docker/"
+    command:
+    - /kaniko/executor
+    args:
+    - --dockerfile=$(params.pathToDockerFile)
+    - --context=$(params.pathToContext)
+    - --destination=$(resources.outputs.builtImage.url):$(params.imageTag)
